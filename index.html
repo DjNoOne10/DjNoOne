@@ -535,6 +535,55 @@ nav{border-color:rgba(255,255,255,.05);}
   body::after{filter:blur(30px);opacity:.45;}
 }
 @media(hover:none){.cursor-glow{display:none;}}
+
+/* ============ NoOne Radio ============ */
+.radio-start{display:inline-flex;align-items:center;gap:12px;margin-top:22px;padding:14px 26px;border-radius:var(--r-pill);
+  background:linear-gradient(110deg,var(--signal),var(--pink));color:#fff;font-weight:700;font-size:14.5px;border:none;cursor:pointer;
+  font-family:inherit;box-shadow:0 14px 40px -14px rgba(255,9,48,.8);transition:transform .35s var(--ease),box-shadow .35s var(--ease);}
+.radio-start:hover{transform:translateY(-3px);box-shadow:0 20px 48px -14px rgba(255,9,48,.95);}
+.radio-start:active{transform:scale(.96);}
+.radio-start .live-dot{width:9px;height:9px;border-radius:50%;background:#fff;animation:radioPulse 1.4s ease infinite;}
+.radio-start small{font-size:11px;opacity:.85;letter-spacing:1.5px;font-weight:600;}
+@keyframes radioPulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.7);}}
+
+.radio-bar{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:55;width:min(760px,calc(100% - 24px));
+  transform:translate(-50%,160%);opacity:0;pointer-events:none;transition:transform .7s var(--ease),opacity .5s;direction:ltr;
+  background:rgba(14,11,14,.78);backdrop-filter:blur(22px) saturate(1.4);-webkit-backdrop-filter:blur(22px) saturate(1.4);
+  border:1px solid rgba(255,9,48,.35);border-radius:26px;padding:12px 16px 14px;
+  box-shadow:0 24px 60px -18px rgba(255,9,48,.55),0 0 0 1px rgba(255,255,255,.04) inset;}
+.radio-bar.on{transform:translate(-50%,0);opacity:1;pointer-events:auto;}
+.rb-row{display:flex;align-items:center;gap:14px;}
+.rb-disc{width:46px;height:46px;border-radius:50%;flex:none;position:relative;
+  background:repeating-radial-gradient(circle at 50% 50%,#0b090b 0 2px,#17121a 2px 4px);border:1px solid var(--glass-line);}
+.rb-disc::after{content:'';position:absolute;inset:16px;border-radius:50%;background:radial-gradient(circle,var(--signal) 0 35%,#2a0710 36%);}
+.radio-bar.playing .rb-disc{animation:rbspin 3.2s linear infinite;}
+@keyframes rbspin{to{transform:rotate(360deg);}}
+.rb-info{flex:1;min-width:0;}
+.rb-live{font-size:10.5px;letter-spacing:2.5px;color:var(--signal2);display:flex;align-items:center;gap:7px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;}
+.rb-live i{width:7px;height:7px;border-radius:50%;background:var(--signal);display:block;}
+.radio-bar.playing .rb-live i{animation:radioPulse 1.4s ease infinite;}
+.rb-title{font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;font-family:'Bricolage Grotesque',sans-serif;}
+.rb-sub{font-size:11.5px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:rtl;text-align:left;}
+.rb-ctrl{display:flex;align-items:center;gap:6px;flex:none;}
+.rb-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--glass-line);background:var(--glass);color:#fff;cursor:pointer;
+  display:grid;place-items:center;transition:.3s var(--ease);-webkit-tap-highlight-color:transparent;}
+.rb-btn svg{width:17px;height:17px;fill:currentColor;}
+.rb-btn:hover{border-color:var(--signal);}
+.rb-btn:active{transform:scale(.9);}
+.rb-btn.main{width:48px;height:48px;background:linear-gradient(135deg,var(--signal),var(--pink));border:none;box-shadow:0 8px 24px -8px rgba(255,9,48,.9);}
+.rb-btn.main svg{width:20px;height:20px;}
+.rb-btn.active{color:var(--gold);border-color:var(--gold);}
+.rb-prog{margin-top:11px;height:5px;border-radius:5px;background:rgba(255,255,255,.1);cursor:pointer;position:relative;}
+.rb-prog b{position:absolute;inset:0 auto 0 0;width:0%;border-radius:5px;background:linear-gradient(90deg,var(--signal),var(--pink),var(--gold));}
+.rb-frame{position:fixed;width:2px;height:2px;left:-10px;bottom:0;opacity:0;pointer-events:none;border:0;}
+body.radio-on{padding-bottom:110px;}
+@media(max-width:600px){
+  .radio-bar{border-radius:22px;padding:10px 12px 12px;}
+  .rb-disc{width:38px;height:38px;}.rb-disc::after{inset:13px;}
+  .rb-btn{width:36px;height:36px;}.rb-btn.main{width:44px;height:44px;}
+  .rb-ctrl{gap:4px;}.rb-title{font-size:14px;}
+  .radio-start{width:100%;justify-content:center;}
+}
 </style>
 </head>
 <body>
@@ -597,6 +646,7 @@ nav{border-color:rgba(255,255,255,.05);}
   <div class="reveal">
     <div class="eyebrow-2"><span class="dotline"></span>SIDE A</div>
     <h2 class="h-title">میکس‌ها</h2>
+    <button class="radio-start" id="radioStart" type="button"><span class="live-dot"></span>رادیو NoOne <small>ON AIR</small></button>
   </div>
   <div class="mix-grid" id="mixGrid"></div>
 </section>
@@ -983,6 +1033,130 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') lightbox.cla
       Object.keys(map).forEach(function(id){var el=document.getElementById(id);if(el)io.observe(el);});
     }
   }catch(e){}
+})();
+</script>
+
+<div class="radio-bar" id="radioBar" aria-label="NoOne Radio">
+  <div class="rb-row">
+    <div class="rb-disc"></div>
+    <div class="rb-info">
+      <div class="rb-live"><i></i>NOONE RADIO · ON AIR</div>
+      <div class="rb-title" id="rbTitle">Nova Mix</div>
+      <div class="rb-sub" id="rbSub"></div>
+    </div>
+    <div class="rb-ctrl">
+      <button class="rb-btn" id="rbShuffle" type="button" aria-label="شافل" title="شافل"><svg viewBox="0 0 24 24"><path d="M10.6 9.2L5.4 4 4 5.4l5.2 5.2 1.4-1.4zM14.5 4l2.05 2.05L4 18.6 5.4 20 17.95 7.45 20 9.5V4h-5.5zm.33 9.4l-1.4 1.4 3.12 3.12L14.5 20H20v-5.5l-2.05 2.05-3.12-3.15z"/></svg></button>
+      <button class="rb-btn" id="rbPrev" type="button" aria-label="قبلی"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+      <button class="rb-btn main" id="rbPlay" type="button" aria-label="پخش/توقف"><svg viewBox="0 0 24 24"><path id="rbPlayIcon" d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
+      <button class="rb-btn" id="rbNext" type="button" aria-label="بعدی"><svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></button>
+      <button class="rb-btn" id="rbClose" type="button" aria-label="بستن رادیو"><svg viewBox="0 0 24 24"><path d="M18.3 5.71L12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.3 19.71 2.89 18.3 9.17 12 2.89 5.71 4.3 4.29l6.29 6.3 6.3-6.3z"/></svg></button>
+    </div>
+  </div>
+  <div class="rb-prog" id="rbProg"><b id="rbProgFill"></b></div>
+</div>
+
+<script src="https://w.soundcloud.com/player/api.js"></script>
+<script>
+/* ============ NoOne Radio: released mixes play back-to-back like a radio station ============ */
+(function(){
+  const bar = document.getElementById('radioBar');
+  const startBtn = document.getElementById('radioStart');
+  if(!bar || !startBtn || typeof mixData === 'undefined') return;
+  const $ = id => document.getElementById(id);
+  const titleEl = $('rbTitle'), subEl = $('rbSub'), fill = $('rbProgFill'), prog = $('rbProg');
+  const playIcon = $('rbPlayIcon'), shuffleBtn = $('rbShuffle');
+  const PLAY_D = 'M8 5v14l11-7z', PAUSE_D = 'M6 5h4v14H6zM14 5h4v14h-4z';
+
+  // Queue = every released mix that has a full SoundCloud link (new mixes join automatically)
+  const queue = () => mixData.filter(m => m.status === 'released' && m.soundcloudUrl);
+  const origTitle = document.title;
+  let order = [], pos = 0, shuffle = false, widget = null, frame = null, isOn = false, playing = false;
+
+  function buildOrder(startAt){
+    const q = queue(); order = q.map((_, i) => i);
+    if(shuffle){
+      for(let i = order.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+    }
+    if(typeof startAt === 'number'){ const k = order.indexOf(startAt); if(k > 0){ order.splice(k, 1); order.unshift(startAt); } }
+    pos = 0;
+  }
+  const current = () => queue()[order[pos]];
+
+  function setPlaying(v){
+    playing = v;
+    bar.classList.toggle('playing', v);
+    playIcon.setAttribute('d', v ? PAUSE_D : PLAY_D);
+  }
+  function show(){
+    const m = current(); if(!m) return;
+    titleEl.textContent = m.title;
+    subEl.textContent = m.tag + '  ·  ' + (pos + 1) + '/' + order.length;
+    fill.style.width = '0%';
+    document.title = '▶ ' + m.title + ' — NoOne Radio';
+  }
+  function bindWidget(){
+    widget.bind(SC.Widget.Events.PLAY, () => setPlaying(true));
+    widget.bind(SC.Widget.Events.PAUSE, () => setPlaying(false));
+    widget.bind(SC.Widget.Events.PLAY_PROGRESS, e => { fill.style.width = (e.relativePosition * 100) + '%'; });
+    widget.bind(SC.Widget.Events.FINISH, () => next());
+    widget.bind(SC.Widget.Events.ERROR, () => next());
+  }
+  function loadCurrent(first){
+    const m = current(); if(!m) return;
+    show();
+    if(first){
+      // iframe is created inside the click, so the browser allows autoplay
+      frame = document.createElement('iframe');
+      frame.className = 'rb-frame'; frame.allow = 'autoplay';
+      frame.src = 'https://w.soundcloud.com/player/?url=' + encodeURIComponent(m.soundcloudUrl) + '&auto_play=true&show_teaser=false&visual=false';
+      document.body.appendChild(frame);
+      widget = SC.Widget(frame);
+      bindWidget();
+    } else {
+      widget.load(m.soundcloudUrl, { auto_play: true, show_teaser: false, visual: false });
+    }
+  }
+  function next(){ pos = (pos + 1) % order.length; if(pos === 0 && shuffle) buildOrder(); loadCurrent(false); }
+  function prev(){ pos = (pos - 1 + order.length) % order.length; loadCurrent(false); }
+
+  function closeCardPlayers(){
+    document.querySelectorAll('.embed-wrap.open').forEach(w => { const b = w.parentElement.querySelector('.play-btn'); if(b) b.click(); });
+  }
+  function start(){
+    if(!queue().length) return;
+    closeCardPlayers();
+    if(isOn){ widget && widget.play(); return; }
+    isOn = true;
+    buildOrder();
+    bar.classList.add('on'); document.body.classList.add('radio-on');
+    loadCurrent(true);
+  }
+  function stop(){
+    if(!isOn) return;
+    isOn = false; setPlaying(false);
+    bar.classList.remove('on'); document.body.classList.remove('radio-on');
+    if(frame){ frame.remove(); frame = null; widget = null; }
+    document.title = origTitle;
+  }
+
+  startBtn.addEventListener('click', start);
+  $('rbPlay').addEventListener('click', () => widget && widget.toggle());
+  $('rbNext').addEventListener('click', next);
+  $('rbPrev').addEventListener('click', prev);
+  $('rbClose').addEventListener('click', stop);
+  shuffleBtn.addEventListener('click', () => {
+    shuffle = !shuffle; shuffleBtn.classList.toggle('active', shuffle);
+    const curIdx = order[pos]; buildOrder(curIdx);   // keep the current mix playing, reshuffle the rest
+    subEl.textContent = current().tag + '  ·  ' + (pos + 1) + '/' + order.length;
+  });
+  prog.addEventListener('click', e => {
+    if(!widget) return;
+    const r = prog.getBoundingClientRect(), ratio = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+    widget.getDuration(d => widget.seekTo(d * ratio));
+  });
+  // Starting a single mix card stops the radio so two players never overlap
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('.mix-card .play-btn'); if(b && isOn) stop(); }, true);
+  window.NoOneRadio = { start, stop };
 })();
 </script>
 </body>
