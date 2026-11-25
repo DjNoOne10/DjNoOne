@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://djnoone.netlify.app/</loc>
-  </url>
+  <url><loc>https://djnoone.netlify.app/</loc></url>
+  <url><loc>https://djnoone.netlify.app/nova-mix</loc></url>
+  <url><loc>https://djnoone.netlify.app/nova-mix-1</loc></url>
+  <url><loc>https://djnoone.netlify.app/nova-mix-2</loc></url>
+  <url><loc>https://djnoone.netlify.app/nova-mix-3</loc></url>
+  <url><loc>https://djnoone.netlify.app/nova-mix-4</loc></url>
+  <url><loc>https://djnoone.netlify.app/nova-mix-5</loc></url>
+  <url><loc>https://djnoone.netlify.app/nova-mix-6</loc></url>
 </urlset>
