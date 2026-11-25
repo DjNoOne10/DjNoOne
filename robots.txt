@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://djnoone.netlify.app/sitemap.xml
